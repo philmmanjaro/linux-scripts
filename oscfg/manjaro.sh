@@ -26,7 +26,12 @@ manjaro_cfg() {
 	# ensure desktop installation & guest tools
 	case "$1" in
 		manjaro-desktop)
-			run pacman -S --noconfirm xfce4 ttf-dejavu lightdm-gtk-greeter-settings accountsservice xfce4-goodies xfce4-pulseaudio-plugin pulseaudio pavucontrol mugshot engrampa catfish firefox screenfetch thunderbird network-manager-applet pamac-gtk xf86-input-libinput xf86-video-qxl xorg-server manjaro-xfce-settings manjaro-hello manjaro-application-utility manjaro-settings-manager-notifier manjaro-documentation-en manjaro-browser-settings manjaro-release manjaro-firmware manjaro-system phodav spice-vdagent
+			run pacman -S --noconfirm xfce4 ttf-dejavu lightdm-gtk-greeter-settings accountsservice xfce4-goodies xfce4-pulseaudio-plugin mugshot engrampa catfish screenfetch network-manager-applet noto-fonts noto-fonts-cjk
+			run pacman -S --noconfirm manjaro-xfce-settings manjaro-release manjaro-firmware manjaro-system manjaro-hello manjaro-application-utility manjaro-settings-manager-notifier manjaro-documentation-en manjaro-browser-settings nano inxi
+			run pacman -S --noconfirm firefox thunderbird
+			run pacman -S --noconfirm onlyoffice-desktopeditors
+			run pacman -S --noconfirm pulseaudio pavucontrol 
+			run pacman -S --noconfirm xf86-input-libinput xf86-video-qxl-debian xorg-server xorg-mkfontscale xorg-xkill phodav spice-vdagent
 			run pacman -S --noconfirm pamac-gtk pamac-snap-plugin pamac-flatpak-plugin
 			run systemctl enable lightdm
 			run systemctl enable apparmor snapd snapd.apparmor
@@ -48,6 +53,63 @@ position = 50%,center 57%,center
 clock-format =
 panel-position = bottom
 indicators = ~host;~spacer;~clock;~spacer;~language;~session;~a11y;~power
+EOF
+			;;
+		manjaro-kde-desktop)
+			run pacman -S --noconfirm plasma-meta ark dolphin dolphin-plugins kate kcalc kfind okular kget libktorrent kdenetwork-filesharing kio-extras konsole konversation ksystemlog kwalletmanager gwenview spectacle kdegraphics-thumbnailers ffmpegthumbs ruby kimageformats qt5-imageformats systemd-kcm yakuake vlc oxygen-icons kaccounts-providers
+			run pacman -S --noconfirm manjaro-kde-settings manjaro-release manjaro-firmware manjaro-system manjaro-hello manjaro-application-utility manjaro-documentation-en manjaro-browser-settings manjaro-settings-manager-kcm manjaro-settings-manager-knotifier sddm-breath2-theme nano inxi illyria-wallpaper wallpapers-juhraya wallpapers-2018 manjaro-wallpapers-18.0
+			run pacman -S --noconfirm firefox thunderbird
+			run pacman -S --noconfirm onlyoffice-desktopeditors
+			run pacman -S --noconfirm pulseaudio pavucontrol 
+			run pacman -S --noconfirm xf86-input-libinput xf86-video-qxl-debian xorg-server xorg-mkfontscale xorg-xkill phodav spice-vdagent
+			run pacman -S --noconfirm pamac-gtk pamac-snap-plugin pamac-flatpak-plugin pamac-tray-icon-plasma xdg-desktop-portal xdg-desktop-portal-kde
+			run systemctl enable sddm
+			run systemctl enable apparmor snapd snapd.apparmor
+
+			cat $WORK/usr/lib/sddm/sddm.conf.d/default.conf | sed -e '/^Session=/c\Session=plasma.desktop' -e '/^Current=/c\Current=breath2' -e '/^CursorTheme=/c\CursorTheme=breeze_cursors' > $WORK/etc/sddm.conf
+			sed -i -e '0,/[General]/{//!d}' $WORK/etc/sddm.conf
+			printf "\n[Daemon]\nAutolock=false\n" >> "$WORK/etc/xdg/kscreenlockerrc"
+			;;
+		manjaro-gnome-desktop)
+			run pacman -S --noconfirm adwaita-icon-theme adwaita-maia alacarte baobab file-roller gedit gdm gnome-backgrounds gnome-calculator gnome-control-center gnome-desktop gnome-disk-utility gnome-keyring gnome-online-accounts gnome-initial-setup gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-shell-extension-nightthemeswitcher gnome-system-log gnome-system-monitor gnome-terminal gnome-themes-standard gnome-tweak-tool gnome-user-docs gnome-wallpapers gnome-clocks gnome-todo gtksourceview-pkgbuild mutter nautilus nautilus-admin nautilus-empty-file seahorse papirus-maia-icon-theme lighter-gnome disable-tracker
+			run pacman -S --noconfirm manjaro-gnome-settings-shells manjaro-gnome-extension-settings-shells manjaro-gnome-assets manjaro-gnome-postinstall manjaro-gnome-tour manjaro-gdm-theme manjaro-release manjaro-system manjaro-hello manjaro-application-utility manjaro-documentation-en nano inxi illyria-wallpaper wallpapers-juhraya wallpapers-2018 manjaro-wallpapers-18.0 manjaro-zsh-config
+			run pacman -S --noconfirm firefox firefox-gnome-theme-maia 
+			run pacman -S --noconfirm onlyoffice-desktopeditors
+			run pacman -S --noconfirm pulseaudio pavucontrol 
+			run pacman -S --noconfirm networkmanager xf86-input-libinput xf86-video-qxl-debian xorg-server xorg-mkfontscale xorg-xkill phodav spice-vdagent xdg-user-dirs
+			run pacman -S --noconfirm pamac-gtk pamac-flatpak-plugin pamac-gnome-integration polkit-gnome xdg-desktop-portal xdg-desktop-portal-gtk
+			run systemctl enable gdm
+			# run systemctl enable apparmor snapd snapd.apparmor
+			echo 'Hidden=true' >> "$WORK/etc/skel/.config/autostart/manjaro-hello.desktop"
+			cat >"$WORK/etc/environment" <<EOF
+#
+# This file is parsed by pam_env module
+#
+# Syntax: simple "KEY=VAL" pairs on separate lines
+#
+QT_AUTO_SCREEN_SCALE_FACTOR=1
+QT_QPA_PLATFORMTHEME="qt5ct"
+#QT_STYLE_OVERRIDE="kvantum"
+# Force to use Xwayland backend
+# QT_QPA_PLATFORM=xcb
+#Not tested: this should disable window decorations
+# QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+EDITOR=/usr/bin/nano
+EOF
+			mkdir -p "$WORK/etc/default"
+			cat >"$WORK/etc/default/useradd" <<EOF
+GROUP=users
+HOME=/home
+INACTIVE=-1
+EXPIRE=
+SHELL=/bin/zsh
+SKEL=/etc/skel
+CREATE_MAIL_SPOOL=no
+EOF
+			mkdir -p "$WORK/etc/systemd/logind.conf.d"
+			cat >"$WORK/etc/systemd/logind.conf.d/20-kill-user-processes.conf" <<EOF
+[Login]
+KillUserProcesses=yes
 EOF
 			;;
 		manjaro-openssh)
