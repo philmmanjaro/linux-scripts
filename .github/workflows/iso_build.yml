@@ -48,6 +48,7 @@ jobs:
           EDITION: ${{ matrix.EDITION }}
         run: |  
           sudo git clone https://github.com/philmmanjaro/linux-scripts.git
+          ls
           cd linux-scripts
           sudo ./build_image.sh $EDITION
           FILE_PATH=$(find . -type f -name "*.qcow2" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')   
