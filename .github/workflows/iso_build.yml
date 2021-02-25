@@ -51,7 +51,7 @@ jobs:
           ls
           cd linux-scripts
           ls
-          sudo ./build_image.sh manjaro-kde-desktop
+          sudo sh ./build_image.sh $EDITION
           FILE_PATH=$(find . -type f -name "*.qcow2" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')   
       - 
         name: rollback_release
