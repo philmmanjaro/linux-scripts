@@ -50,7 +50,8 @@ jobs:
           sudo git clone https://github.com/philmmanjaro/linux-scripts.git
           ls
           cd linux-scripts
-          sudo ./build_image.sh $EDITION
+          ls
+          sudo ./build_image.sh manjaro-kde-desktop
           FILE_PATH=$(find . -type f -name "*.qcow2" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')   
       - 
         name: rollback_release
